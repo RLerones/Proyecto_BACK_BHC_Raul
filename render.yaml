@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: backend-bhc-raul
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn -w 4 -b 0.0.0.0:10000 project1.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://db_user_project_user:EGABqLQTn1h1cEuX3cPkoezOqINODQq0@dpg-cqb4dmmehbks73dioh50-a.frankfurt-postgres.render.com/db_user_project
+      - key: SECRET_KEY
+        fromDatabase:
+          name: my_database
+          property: secret_key
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: your_domain.com

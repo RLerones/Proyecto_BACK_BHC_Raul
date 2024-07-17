@@ -9,44 +9,40 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+import os
 from datetime import timedelta
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Cargar variables del archivo .env
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3+5^+^jl_m%&q&(wn+%emjb_2=(hls+qvnuimz#$0lx0vs)f!f'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-3+5^+^jl_m%&q&(wn+%emjb_2=(hls+qvnuimz#$0lx0vs)f!f')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ]
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
-# configuracion del token
+# Configuración del token
 SIMPLE_JWT = {
-    # el tiempo que tarda en caducarse el token de acceso
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
-    # el tiempo que tarda en caducarse el token de refresco que se utiliza para volver a solicitar el de acceso
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-
-    # It will work instead of the default serializer(TokenObtainPairSerializer).
     "TOKEN_OBTAIN_SERIALIZER": "users.serializers.user_serializers.MyTokenObtainPairSerializer",
 }
 
@@ -54,24 +50,22 @@ AUTH_USER_MODEL = "users.BaseUser"
 
 # Application definition
 
-# mis apps
+# Mis apps
 MY_APPS = [
     'users',
     'stock',
     'corsheaders'
 ]
 
-# mis librerías
+# Mis librerías
 MY_LIBS = [
     'rest_framework',
     'drf_spectacular',
     'django_filters',
-
 ]
 
-# librerías por defecto
+# Librerías por defecto
 DEFAULT_LIBS = [
-    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -79,8 +73,7 @@ DEFAULT_LIBS = [
     'django.contrib.staticfiles',
 ]
 
-# juntar las apps en orden para evitar errores
-
+# Juntar las apps en orden para evitar errores
 INSTALLED_APPS = DEFAULT_LIBS + MY_LIBS + MY_APPS
 
 MIDDLEWARE = [
@@ -117,21 +110,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project1.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'db_user_project',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME', 'db_user_project'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -151,7 +142,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -162,7 +152,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
